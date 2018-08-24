@@ -1,8 +1,17 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window/Mouse.hpp>
 #include <Box2D/Box2D.h>
+#include <nlohmann/json.hpp>
+#include <iostream>
+#include <fstream>
+
+using json = nlohmann::json;
+using namespace std;
 
 int main() {
+  std::ifstream ifs("geeko.json");
+  json j = json::parse(ifs);
+  
   sf::ContextSettings settings;
   settings.antialiasingLevel = 8;
 
@@ -24,12 +33,31 @@ int main() {
     
     window.clear(sf::Color::White);
     
-    sf::Sprite sprite;
+    /*sf::Sprite sprite;
     sprite.setTexture(geekoTexture);
     sprite.setOrigin(77, 41);
     sprite.setPosition(200, 200);
     sprite.setRotation(angle * 180/b2_pi);
-    window.draw(sprite);
+    window.draw(sprite);*/
+    
+    auto polygons = j["rigidBodies"][0]["polygons"];
+  for (auto iter = polygons.begin(); iter != polygons.end(); iter++) {
+    // cout << iter.value() << "\n\n";
+    auto vertices = iter.value();
+    
+    sf::ConvexShape convex;
+    convex.setPointCount(vertices.size());
+    for (auto vertex_iter = vertices.begin(); vertex_iter != vertices.end(); vertex_iter++) {
+      auto vertex = vertex_iter.value();
+      convex.setPoint(
+        std::distance(vertices.begin(), vertex_iter),
+        sf::Vector2f((double)vertex["x"] * 100 + 100, (double)vertex["y"] * -100 + 100)
+      );
+    }
+    convex.setOutlineThickness(1);
+    convex.setOutlineColor(sf::Color(250, 150, 100));
+    window.draw(convex);
+  }
     
     window.display();
     
