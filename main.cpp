@@ -18,14 +18,19 @@ class Geekofall {
   sf::Texture geekoTexture;
 
   int ticks = 0;
+  int screenWidth, screenHeight;
+  double b2screen = 0;
 
   public:
+
+  double scale = 0.5;
+  double bounciness = 0.3;
+  bool drawMesh = false;
 
   void createSFMLWindow() {
     char* wid_env;
 
     if ((wid_env = getenv("XSCREENSAVER_WINDOW")) != NULL) {
-      int width, height;
       Display *display;
 
       if ((display = XOpenDisplay(NULL)) == NULL) exit(1);
@@ -37,12 +42,12 @@ class Geekofall {
       XWindowAttributes windowAttributes;
 
       XGetWindowAttributes(display, x11win, &windowAttributes);
-			width = windowAttributes.width;
-			height = windowAttributes.height;
+			screenWidth = windowAttributes.width;
+			screenHeight = windowAttributes.height;
 
       Window x11view = XCreateWindow(
         display, x11win,
-        0, 0, width, height, 0,
+        0, 0, screenWidth, screenHeight, 0,
         DefaultDepth(display, screen), InputOutput,
         DefaultVisual(display, screen), 0, NULL
       );
@@ -54,7 +59,12 @@ class Geekofall {
     } else {
       sf::ContextSettings settings;
       settings.antialiasingLevel = 8;
-      window = new sf::RenderWindow(sf::VideoMode(800, 600, 32), "Geekofall", sf::Style::Default, settings);
+      screenWidth = 800;
+      screenHeight = 600;
+      window = new sf::RenderWindow(
+        sf::VideoMode(screenWidth, screenHeight, 32),
+        "Geekofall", sf::Style::Default, settings
+      );
     }
     window->setFramerateLimit(60);
   }
@@ -66,12 +76,12 @@ class Geekofall {
 
   b2Body* createShelf() {
     b2BodyDef bodyDef;
-    bodyDef.position = b2Vec2(4, 6);
+    bodyDef.position = b2Vec2(screenWidth / b2screen / 2, screenHeight / b2screen - 0.025f);
     bodyDef.type = b2_staticBody;
     b2Body* body = world->CreateBody(&bodyDef);
 
     b2PolygonShape shape;
-    shape.SetAsBox(5, 0.025f);
+    shape.SetAsBox(screenWidth / b2screen / 2, 0.025f);
     b2FixtureDef fixtureDef;
     fixtureDef.density = 0;
     fixtureDef.shape = &shape;
@@ -80,9 +90,9 @@ class Geekofall {
     return body;
   }
 
-  b2Body* createGeeko(int x, int y) {
+  b2Body* createGeeko(double x, double y) {
     b2BodyDef bodyDef;
-    bodyDef.position = b2Vec2(3, 0);
+    bodyDef.position = b2Vec2(x, y);
     bodyDef.type = b2_dynamicBody;
     b2Body* body = world->CreateBody(&bodyDef);
 
@@ -107,7 +117,7 @@ class Geekofall {
       b2FixtureDef fixtureDef;
       fixtureDef.shape = &polygonShape;
       fixtureDef.density = 1;
-      fixtureDef.restitution = 0.9f;
+      fixtureDef.restitution = bounciness;
 
       body->CreateFixture(&fixtureDef);
     }
@@ -129,17 +139,17 @@ class Geekofall {
       for(int i = 0; i < count; i++) {
         b2Vec2 vert = body->GetWorldPoint(polygonShape->GetVertex(i));
 
-        convex.setPoint(i, sf::Vector2f(vert.x * 100, vert.y * 100));
+        convex.setPoint(i, sf::Vector2f(vert.x * b2screen, vert.y * b2screen));
       }
 
       convex.setOutlineThickness(1);
-      convex.setOutlineColor(sf::Color(250, 150, 100));
+      convex.setOutlineColor(sf::Color(2, 211, 95));
       convex.setFillColor(sf::Color::Black);
       window->draw(convex);
 
-      sf::CircleShape shape(3);
-      shape.setPosition(pos.x*100, pos.y*100);
-      shape.setFillColor(sf::Color(100, 250, 50));
+      sf::CircleShape shape(1);
+      shape.setPosition(pos.x * b2screen, pos.y * b2screen);
+      shape.setFillColor(sf::Color(2, 211, 95));
       window->draw(shape);
     }
   }
@@ -149,24 +159,18 @@ class Geekofall {
 
     sf::Sprite sprite;
     sprite.setTexture(geekoTexture);
-    sprite.setOrigin(0, 82);
-    sprite.setScale(0.65, 0.65);
-    sprite.setPosition(pos.x * 100, pos.y * 100);
+    sprite.setOrigin(0, 83);
+    sprite.setScale(scale, scale);
+    sprite.setPosition(pos.x * b2screen, pos.y * b2screen);
     sprite.rotate(body->GetAngle()*180/b2_pi);
     window->draw(sprite);
   }
 
-  Geekofall() {
-    std::ifstream ifs("geeko.json"); // FIXME: path in the Makefile
-    json_data = json::parse(ifs);
-
-    createSFMLWindow();
-    createBox2DWorld();
+  void run() {
+    sf::Vector2u geekoSize = geekoTexture.getSize();
+    b2screen = scale * geekoSize.x;
 
     auto shelf = createShelf();
-
-    geekoTexture.loadFromFile("geeko.png"); // FIXME: path in the Makefile
-    geekoTexture.setSmooth(true);
 
     while (window->isOpen()) {
       sf::Event event;
@@ -175,24 +179,15 @@ class Geekofall {
               window->close();
       }
 
-      /*
-      if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-      {
-          int MouseX = sf::Mouse::getPosition(Window).x;
-          int MouseY = sf::Mouse::getPosition(Window).y;
-      }
-      */
-
-      if (ticks == 0) createGeeko(3,2);
+      if (ticks == 0) createGeeko(((double) screenWidth) / b2screen / 2 - 0.5, 0); // minus 0.5 geekos for centering
 
       window->clear(sf::Color::Black);
 
-      //drawBodyMesh(shelf);
+      if (drawMesh) drawBodyMesh(shelf);
 
       for (b2Body* body = world->GetBodyList(); body != 0; body = body->GetNext()) {
         if (body->GetType() == b2_dynamicBody) {
-          //drawBodyMesh(body);
-          drawBodySprite(body);
+          drawMesh ? drawBodyMesh(body) : drawBodySprite(body);
         }
       }
 
@@ -202,10 +197,22 @@ class Geekofall {
       world->Step(1/60.f, 8, 3);
     }
   }
+
+  Geekofall() {
+    std::ifstream ifs("geeko.json"); // FIXME: path in the Makefile
+    json_data = json::parse(ifs);
+
+    createSFMLWindow();
+    createBox2DWorld();
+
+    geekoTexture.loadFromFile("geeko.png"); // FIXME: path in the Makefile
+    geekoTexture.setSmooth(true);
+  }
 };
 
 int main() {
-  new Geekofall();
+  auto gf = Geekofall();
+  gf.run();
 
   return 0;
 }
