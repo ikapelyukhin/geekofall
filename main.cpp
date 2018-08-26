@@ -120,6 +120,7 @@ class Geekofall {
       fixtureDef.restitution = bounciness;
 
       body->CreateFixture(&fixtureDef);
+      body->SetBullet(true);
     }
 
     return body;
