@@ -5,6 +5,14 @@
 #include <iostream>
 #include <fstream>
 
+#ifndef JSON_PATH
+#define JSON_PATH "geeko.json"
+#endif
+
+#ifndef TEXTURE_PATH
+#define TEXTURE_PATH "geeko.png"
+#endif
+
 using json = nlohmann::json;
 using namespace std;
 
@@ -200,13 +208,13 @@ class Geekofall {
   }
 
   Geekofall() {
-    std::ifstream ifs("geeko.json"); // FIXME: path in the Makefile
+    std::ifstream ifs(JSON_PATH);
     json_data = json::parse(ifs);
 
     createSFMLWindow();
     createBox2DWorld();
 
-    geekoTexture.loadFromFile("geeko.png"); // FIXME: path in the Makefile
+    geekoTexture.loadFromFile(TEXTURE_PATH);
     geekoTexture.setSmooth(true);
   }
 };
