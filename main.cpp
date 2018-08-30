@@ -119,6 +119,7 @@ class Geekofall {
       }
 
       polygonShape.Set(b2vertices, vertices.size());
+      delete(b2vertices);
 
       /*****/
 
@@ -224,6 +225,10 @@ class Geekofall {
 
     geekoTexture.loadFromFile(TEXTURE_FILE);
     geekoTexture.setSmooth(true);
+  }
+
+  ~Geekofall() {
+    delete(world);
   }
 };
 
