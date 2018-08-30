@@ -128,7 +128,6 @@ class Geekofall {
       fixtureDef.restitution = bounciness;
 
       body->CreateFixture(&fixtureDef);
-      body->SetBullet(true);
     }
 
     return body;
@@ -195,8 +194,13 @@ class Geekofall {
       if (drawMesh) drawBodyMesh(shelf);
 
       for (b2Body* body = world->GetBodyList(); body != 0; body = body->GetNext()) {
-        if (body->GetType() == b2_dynamicBody) {
-          drawMesh ? drawBodyMesh(body) : drawBodySprite(body);
+        if (body->GetType() != b2_dynamicBody) continue;
+
+        drawMesh ? drawBodyMesh(body) : drawBodySprite(body);
+
+        b2Vec2 pos = body->GetPosition();
+        if (pos.y * b2screen > screenHeight + geekoSize.y) {
+          world->DestroyBody(body);
         }
       }
 
