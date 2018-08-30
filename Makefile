@@ -1,11 +1,25 @@
-ifdef DESTDIR
-JSON_PATH=-DJSON_PATH='"$(DESTDIR)/geeko.json"'
-TEXTURE_PATH=-DTEXTURE_PATH='"$(DESTDIR)/geeko.png"'
-endif
+PREFIX?=/usr
+BINDIR?=/bin
+SHAREDIR?=/share/geekofall
 
-CFLAGS=-c main.cpp -I. -I./nlohmann/json/single_include $(JSON_PATH) $(TEXTURE_PATH)
-LDFLAGS=-lsfml-graphics -lsfml-window -lsfml-system -lBox2D -lX11
+DATA_PATH?=$(PREFIX)$(SHAREDIR)
 
-all:
-	g++ $(CFLAGS)
-	g++ main.o -o geekofall $(LDFLAGS)
+CPPFLAGS+=-O2 -Inlohmann/json/single_include -DDATA_PATH=\"$(DATA_PATH)\"
+LDFLAGS+=-lsfml-graphics -lsfml-window -lsfml-system -lBox2D -lX11
+
+SOURCES=$(wildcard *.cpp)
+OBJ=$(patsubst %.cpp,%.o,$(SOURCES))
+
+all: geekofall
+
+geekofall: $(OBJ)
+	c++ -o geekofall $(LDFLAGS) $(OBJ)
+
+clean:
+	rm -f geekofall $(OBJ)
+
+install: geekofall
+	install -d geekofall $(DESTDIR)$(PREFIX)$(BINDIR)/geekofall
+	install -d geeko.json $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.json
+	install -d geeko.png  $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.png
+
