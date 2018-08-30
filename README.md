@@ -6,7 +6,7 @@
 
 # Building from source
 
-1. `zypper in sfml2-devel libBox2D-devel libX11-devel`
+1. `zypper in nlohmann_json-devel sfml2-devel libBox2D-devel libX11-devel`
 2. `make`
 3. `make install`
 4. Add `geekofall -root \n\` to `~/.xscreensaver`

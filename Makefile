@@ -4,7 +4,7 @@ SHAREDIR?=/share/geekofall
 
 DATA_PATH?=$(PREFIX)$(SHAREDIR)
 
-CPPFLAGS+=-O2 -Inlohmann/json/single_include -DDATA_PATH=\"$(DATA_PATH)\"
+CPPFLAGS+=-O2 -DDATA_PATH=\"$(DATA_PATH)\"
 LDFLAGS+=-lsfml-graphics -lsfml-window -lsfml-system -lBox2D -lX11
 
 SOURCES=$(wildcard *.cpp)
