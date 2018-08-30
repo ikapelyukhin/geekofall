@@ -193,15 +193,19 @@ class Geekofall {
 
       if (drawMesh) drawBodyMesh(shelf);
 
-      for (b2Body* body = world->GetBodyList(); body != 0; body = body->GetNext()) {
-        if (body->GetType() != b2_dynamicBody) continue;
+      for (b2Body* body = world->GetBodyList(); body != 0;) {
+        b2Body* nextBody = body->GetNext();
 
-        drawMesh ? drawBodyMesh(body) : drawBodySprite(body);
+        if (body->GetType() == b2_dynamicBody) {
+          drawMesh ? drawBodyMesh(body) : drawBodySprite(body);
 
-        b2Vec2 pos = body->GetPosition();
-        if (pos.y * b2screen > screenHeight + geekoSize.y) {
-          world->DestroyBody(body);
+          b2Vec2 pos = body->GetPosition();
+          if (pos.y * b2screen > screenHeight + geekoSize.y) {
+            world->DestroyBody(body);
+          }
         }
+
+        body = nextBody;
       }
 
       window->display();
