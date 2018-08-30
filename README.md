@@ -6,10 +6,11 @@
 
 # Building from source
 
-1. `zypper in sfml2-devel libBox2D-devel libX11-devel`
-2. `DESTDIR=/usr/share/geekofall/ make`
-3. There's no `make install`! So:
-    * Copy `geekofall` to `/usr/lib64/xscreensaver/`
-    * Copy `geeko.png` and `geeko.json` to `/usr/share/geekofall/`
+1. `zypper in nlohmann_json-devel sfml2-devel libBox2D-devel libX11-devel`
+2. `make`
+3. `make install`
 4. Add `geekofall -root \n\` to `~/.xscreensaver`
 5. Choose the screensaver in XScreensaver settings and you are ready to drop some Geekos!
+
+Note: If you would like `geekofall` to use data files without installing them, compile with `DATA_PATH=. make` instead.
+
