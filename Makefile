@@ -19,7 +19,9 @@ clean:
 	rm -f geekofall $(OBJ)
 
 install: geekofall
-	install -d geekofall $(DESTDIR)$(PREFIX)$(BINDIR)/geekofall
-	install -d geeko.json $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.json
-	install -d geeko.png  $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.png
+	install -d $(DESTDIR)$(PREFIX)$(BINDIR)
+	install -d $(DESTDIR)$(PREFIX)$(SHAREDIR)
+	install geekofall $(DESTDIR)$(PREFIX)$(BINDIR)/geekofall
+	install geeko.json $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.json
+	install geeko.png  $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.png
 
