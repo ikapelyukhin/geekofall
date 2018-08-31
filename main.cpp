@@ -119,7 +119,7 @@ class Geekofall {
       }
 
       polygonShape.Set(b2vertices, vertices.size());
-      delete(b2vertices);
+      delete[] b2vertices;
 
       /*****/
 
@@ -214,6 +214,8 @@ class Geekofall {
       ticks = (ticks + 1) % 60;
       world->Step(1/60.f, 8, 3);
     }
+
+    delete window;
   }
 
   Geekofall() {
