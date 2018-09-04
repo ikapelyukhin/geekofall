@@ -47,18 +47,15 @@ class Geekofall {
       x11win = (Window) strtol(wid_env, (char **) NULL, 0);
 
       int screen = DefaultScreen(display);
-      XWindowAttributes windowAttributes;
+      XWindowAttributes wa;
 
-      XGetWindowAttributes(display, x11win, &windowAttributes);
-			screenWidth = windowAttributes.width;
-			screenHeight = windowAttributes.height;
+      XGetWindowAttributes(display, x11win, &wa);
+      screenWidth = wa.width;
+      screenHeight = wa.height;
 
-      Window x11view = XCreateWindow(
+      Window x11view = XCreateSimpleWindow(
         display, x11win,
-        0, 0, screenWidth, screenHeight, 0,
-        DefaultDepth(display, screen), InputOutput,
-        DefaultVisual(display, screen), 0, NULL
-      );
+        0, 0, wa.width, wa.height, 0, 0, 0);
 
       XMapWindow(display, x11win);
       XFlush(display);
