@@ -50,7 +50,6 @@ class Geekofall {
       Window x11win;
       x11win = (Window) strtol(wid_env, (char **) NULL, 0);
 
-      int screen = DefaultScreen(display);
       XWindowAttributes wa;
 
       XGetWindowAttributes(display, x11win, &wa);
