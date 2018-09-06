@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <fstream>
+#include <random>
 
 #ifndef DATA_PATH
 #define DATA_PATH "."
@@ -28,6 +29,9 @@ class Geekofall {
   int ticks = 0;
   int screenWidth, screenHeight;
   double b2screen = 0;
+
+  std::mt19937 random;
+  std::normal_distribution<double> dist;
 
   public:
 
@@ -98,6 +102,8 @@ class Geekofall {
   b2Body* createGeeko(double x, double y) {
     b2BodyDef bodyDef;
     bodyDef.position = b2Vec2(x, y);
+    bodyDef.linearVelocity = b2Vec2(dist(random), 0);
+    bodyDef.angularVelocity = 10.0*dist(random);
     bodyDef.type = b2_dynamicBody;
     b2Body* body = world->CreateBody(&bodyDef);
 
@@ -173,6 +179,8 @@ class Geekofall {
   }
 
   void run() {
+    random.seed(time(NULL));
+
     sf::Vector2u geekoSize = geekoTexture.getSize();
     b2screen = scale * geekoSize.x;
 
