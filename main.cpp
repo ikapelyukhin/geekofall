@@ -119,10 +119,10 @@ class Geekofall {
   b2Body* createGeeko(double x, double y) {
     b2BodyDef bodyDef;
     bodyDef.position = b2Vec2(x, y);
-    bodyDef.linearVelocity = b2Vec2(dist(random), 0);
-    bodyDef.angularVelocity = 10.0*dist(random);
     bodyDef.type = b2_dynamicBody;
     b2Body* body = world->CreateBody(&bodyDef);
+    body->ApplyLinearImpulse(b2Vec2(2.5*dist(random), 0), body->GetWorldCenter(), true);
+    body->ApplyTorque(10*dist(random), true);
 
     auto polygons = json_data["rigidBodies"][0]["polygons"];
     for (auto iter = polygons.begin(); iter != polygons.end(); iter++) {
