@@ -22,5 +22,5 @@ install: geekofall
 	install -d $(DESTDIR)$(PREFIX)$(BINDIR)
 	install -d $(DESTDIR)$(PREFIX)$(SHAREDIR)
 	install geekofall $(DESTDIR)$(PREFIX)$(BINDIR)/geekofall
-	install geeko.json $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.json
-	install geeko.png  $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.png
+	install -m 0644 geeko.json $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.json
+	install -m 0644 geeko.png  $(DESTDIR)$(PREFIX)$(SHAREDIR)/geeko.png
