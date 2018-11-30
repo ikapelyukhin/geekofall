@@ -53,7 +53,7 @@ class Geekofall {
 
   public:
 
-  double scale = 0.5;
+  double scale = 0.25;
   double bounciness = 0.3;
   bool drawMesh = false;
 
@@ -85,8 +85,8 @@ class Geekofall {
     } else {
       sf::ContextSettings settings;
       settings.antialiasingLevel = 8;
-      screenWidth = 800;
-      screenHeight = 600;
+      screenWidth = 1024;
+      screenHeight = 768;
       window = new sf::RenderWindow(
         sf::VideoMode(screenWidth, screenHeight, 32),
         "Geekofall", sf::Style::Default, settings
@@ -188,7 +188,7 @@ class Geekofall {
 
     sf::Sprite sprite;
     sprite.setTexture(geekoTexture);
-    sprite.setOrigin(0, 83);
+    sprite.setOrigin(0, 150);
     sprite.setScale(scale, scale);
     sprite.setPosition(pos.x * b2screen, pos.y * b2screen);
     sprite.rotate(body->GetAngle()*180/b2_pi);
